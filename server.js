@@ -4,7 +4,7 @@ const express = require('express');
 
 // Constants
 const PORT = 3000;
-const HOST = '0.0.0.0';
+const HOST = os.networkInterfaces().eth0[0].address;
 
 // App
 const app = express();
