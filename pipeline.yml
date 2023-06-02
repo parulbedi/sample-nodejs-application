@@ -14,13 +14,31 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
-- script: |
-    npm install
+- script: npm install
   displayName: 'npm install'
 
-- script: |
-    npm run build
+- script: npm run build
   displayName: 'npm build'
+
+- script: npm test
+  displayName: 'npm test'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/TEST-*.xml'
+    testRunTitle: 'Running Test'
+
+- script: |
+    nyc --reporter=cobertura --reporter=html \
+    npm test -- --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml
+  displayName: 'code coverage report'
+
+- task: PublishCodeCoverageResults@1
+  inputs: 
+    codeCoverageTool: Cobertura # or JaCoCo
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
 - task: ArchiveFiles@2
   inputs:
