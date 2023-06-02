@@ -1,6 +1,9 @@
 trigger:
 - none
 
+variables:
+    nName: 'node-app'
+
 pool:
   name: 'default'
   agent.name: ubuntu-agent
