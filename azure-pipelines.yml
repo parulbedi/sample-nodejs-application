@@ -1,0 +1,75 @@
+trigger:
+- main
+
+variables:
+    nName: 'node-app'
+
+pool:
+  name: 'default'
+  agent.name: ubuntu-agent
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- script: npm install
+  displayName: 'npm install'
+
+- script: npm run build
+  displayName: 'npm build'
+
+- script: npm test
+  displayName: 'npm test'
+
+- script: |
+    sudo npm install pm2 -g -y
+    sudo apt update
+    pm2 --version
+  displayName: 'PM2 install'
+
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/TEST-*.xml'
+    testRunTitle: 'Running Test'
+
+# - script: |
+#     wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+#     sudo dpkg -i packages-microsoft-prod.deb
+#     sudo apt install dotnet-runtime-3.1
+#     sudo apt-get install -y dotnet-sdk-5.0
+#   displayName: 'installing .net Core for reporting'
+
+- task: UseDotNet@2
+  inputs:
+    version: '3.1.x'
+    packageType: sdk
+  displayName: 'installing .net Core for reporting'
+
+- script: |
+
+    npm test -- --reporter mocha-junit-reporter --reporter-options mochaFile=./test-results.xml
+  displayName: 'code coverage report'
+
+- task: PublishCodeCoverageResults@1
+  inputs: 
+    codeCoverageTool: Cobertura # or JaCoCo
+    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+    reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+    includeRootFolder: false
+    archiveType: 'tar'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(nName).tar.gz'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
