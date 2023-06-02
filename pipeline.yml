@@ -1,5 +1,5 @@
 trigger:
-- none
+- main
 
 variables:
     nName: 'node-app'
@@ -16,8 +16,11 @@ steps:
 
 - script: |
     npm install
+  displayName: 'npm install'
+
+- script: |
     npm run build
-  displayName: 'npm install and build'
+  displayName: 'npm build'
 
 - task: ArchiveFiles@2
   inputs:
