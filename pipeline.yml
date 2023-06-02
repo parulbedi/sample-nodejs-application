@@ -29,13 +29,18 @@ steps:
     testResultsFiles: '**/TEST-*.xml'
     testRunTitle: 'Running Test'
 
-- script: |
-    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-    sudo dpkg -i packages-microsoft-prod.deb
-    sudo apt install dotnet-runtime-3.1
-    sudo apt-get install -y dotnet-sdk-5.0
-  displayName: 'installing .net Core for reporting'
+# - script: |
+#     wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+#     sudo dpkg -i packages-microsoft-prod.deb
+#     sudo apt install dotnet-runtime-3.1
+#     sudo apt-get install -y dotnet-sdk-5.0
+#   displayName: 'installing .net Core for reporting'
 
+- task: UseDotNet@2
+  inputs:
+    version: '3.1.x'
+    packageType: sdk
+  displayName: 'installing .net Core for reporting'
 
 - script: |
 
