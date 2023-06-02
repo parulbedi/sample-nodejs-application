@@ -1,5 +1,5 @@
 trigger:
-- main
+- none
 
 variables:
     nName: 'node-app'
@@ -39,6 +39,12 @@ steps:
     codeCoverageTool: Cobertura # or JaCoCo
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/TEST-*.xml'
+    testRunTitle: 'Running Test'
 
 - task: ArchiveFiles@2
   inputs:
