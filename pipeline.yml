@@ -23,6 +23,10 @@ steps:
 - script: npm test
   displayName: 'npm test'
 
+- script: npm install -g pm2
+  displayName: 'PM2 install'
+
+
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
